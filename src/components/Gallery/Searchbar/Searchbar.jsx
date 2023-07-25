@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import Notiflix from 'notiflix';
 import PropTypes from 'prop-types';
 import {
@@ -8,46 +8,41 @@ import {
   SearchBarButton,
 } from './Searchbar.styled';
 
-class SearchBar extends React.Component {
-  state = {
-    value: '',
+function SearchBar({ onSubmit }) {
+  const [value, setValue] = useState('');
+
+  const handleChangeInput = e => {
+    setValue(e.target.value.trim())
   };
 
-  handleChangeInput = e => {
-    this.setState({ value: e.target.value });
-  };
-
-  handleSubmitForm = e => {
+  const handleSubmitForm = e => {
     e.preventDefault();
-    const searchQuery = e.target.elements.searchName.value.trim();
-    if (searchQuery === '') {
+    if (!value) {
       Notiflix.Notify.warning('Please enter something in the search');
     }
-    this.props.onSubmit(searchQuery);
-    this.setState({ value: '' });
+    onSubmit(value);
+    setValue('');
   };
 
-  render() {
-    return (
-      <SearchBarWrapper>
-        <Form onSubmit={this.handleSubmitForm} >
-          <SearchBarButton type="submit">
-            <span>Search</span>
-          </SearchBarButton>
+  return (
+    <SearchBarWrapper>
+      <Form onSubmit={handleSubmitForm}>
+        <SearchBarButton type="submit">
+          <span>Search</span>
+        </SearchBarButton>
 
-          <Input
-            name="searchName"
-            type="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-            onChange={this.handleChangeInput}
-            value={this.state.value}
-          />
-        </Form>
-      </SearchBarWrapper>
-    );
-  }
+        <Input
+          name="searchName"
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          onChange={handleChangeInput}
+          value={value}
+        />
+      </Form>
+    </SearchBarWrapper>
+  );
 }
 
 SearchBar.propTypes = {
